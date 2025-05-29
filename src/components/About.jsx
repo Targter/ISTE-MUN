@@ -5,14 +5,17 @@ import {
   useTransform,
   useSpring,
   useInView,
+  useMotionValue,
 } from "framer-motion";
+// import { motion, useSpring, useMotionValue, useTransform } from "framer-motion";
+
 import NET from "vanta/dist/vanta.net.min";
 import * as THREE from "three";
 
 const About = () => {
   const sectionRef = useRef(null);
   const statsRef = useRef(null);
-  const isInView = useInView(statsRef, { once: true, margin: "-100px" });
+  const isInView = useInView(statsRef, { once: true, amount: 0.3 });
 
   // Scroll-based animations
   const { scrollYProgress } = useScroll({
@@ -20,13 +23,13 @@ const About = () => {
     offset: ["start end", "end start"],
   });
 
-  const parallaxY = useTransform(scrollYProgress, [0, 1], [70, -70]);
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [80, -80]);
   const opacity = useTransform(
     scrollYProgress,
-    [0, 0.25, 0.75, 1],
-    [0, 1, 1, 0.85]
+    [0, 0.2, 0.8, 1],
+    [0, 1, 1, 0.9]
   );
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1, 1.1]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.88, 1, 1.12]);
 
   // Vanta.js background effect
   useEffect(() => {
@@ -40,11 +43,11 @@ const About = () => {
       minWidth: 200.0,
       scale: 1.0,
       scaleMobile: 1.5,
-      color: 0x9b1c1c, // Refined crimson
-      backgroundColor: 0x080000, // Deep near-black
-      points: 16.0,
-      maxDistance: 14.0,
-      spacing: 18.0,
+      color: 0xa11212, // Vibrant crimson
+      backgroundColor: 0x050000, // Deep near-black
+      points: 18.0,
+      maxDistance: 13.0,
+      spacing: 16.0,
       showDots: true,
     });
 
@@ -58,57 +61,74 @@ const About = () => {
     visible: {
       opacity: 1,
       transition: {
-        duration: 1.4,
-        ease: [0.36, 0, 0.66, 1], // Smoother cubic-bezier
+        duration: 1.5,
+        ease: [0.33, 0, 0.67, 1], // Smooth cubic-bezier
         when: "beforeChildren",
-        staggerChildren: 0.4,
+        staggerChildren: 0.45,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.96 },
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 1, ease: [0.36, 0, 0.66, 1] },
+      transition: { duration: 1.1, ease: [0.33, 0, 0.67, 1] },
     },
   };
 
   const imageVariants = {
-    hidden: { opacity: 0, x: 100 },
+    hidden: { opacity: 0, x: 120 },
     visible: {
       opacity: 1,
       x: 0,
-      transition: { duration: 1.2, ease: "easeInOut" },
+      transition: { duration: 1.3, ease: "easeInOut" },
     },
   };
 
   const statCardVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
+      transition: { duration: 0.9, ease: "easeOut" },
     },
   };
 
   // Number counter effect
-  const NumberCounter = ({ end, duration = 2.5 }) => {
-    const count = useSpring(0, {
-      stiffness: 80,
-      damping: 25,
-      duration: duration * 1000,
+  // const NumberCounter = ({ end, duration = 3 }) => {
+  //   const count = useSpring(0, {
+  //     stiffness: 70,
+  //     damping: 30,
+  //     duration: duration * 1000,
+  //   });
+
+  //   useEffect(() => {
+  //     if (isInView) {
+  //       count.set(end);
+  //     }
+  //   }, [isInView, count, end]);
+
+  //   return <motion.span>{count.to((val) => Math.floor(val))}</motion.span>;
+  // };
+  const NumberCounter = ({ end, duration = 3 }) => {
+    const motionValue = useMotionValue(0);
+    const springValue = useSpring(motionValue, {
+      stiffness: 100,
+      damping: 20,
     });
 
     useEffect(() => {
       if (isInView) {
-        count.set(end);
+        motionValue.set(end);
       }
-    }, [isInView, count, end]);
+    }, [isInView, end, motionValue]);
 
-    return <motion.span>{Math.floor(count.get())}</motion.span>;
+    const rounded = useTransform(springValue, (val) => Math.floor(val));
+
+    return <motion.span>{rounded}</motion.span>;
   };
 
   return (
@@ -116,12 +136,12 @@ const About = () => {
       <motion.section
         id="about"
         ref={sectionRef}
-        className="py-32 bg-transparent relative z-10 text-white font-semibold"
+        className="py-36 bg-transparent relative z-10 text-white font-semibold"
         style={{ opacity }}
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-14">
           <motion.div
-            className="text-center mb-24"
+            className="text-center mb-28"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
@@ -133,7 +153,7 @@ const About = () => {
               About Chandigarh University MUN 2025
             </motion.h2>
             <motion.div
-              className="w-36 h-1 bg-red-900 mx-auto mb-8 rounded-full"
+              className="w-40 h-1 bg-red-900 mx-auto mb-10 rounded-full"
               variants={itemVariants}
             ></motion.div>
             <motion.p
@@ -149,7 +169,7 @@ const About = () => {
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-14 lg:gap-24 items-start">
             <motion.div
               className="order-2 md:order-1"
               initial="hidden"
@@ -228,13 +248,13 @@ const About = () => {
               >
                 <a
                   href="#committees"
-                  className="px-8 py-3 bg-red-900 hover:bg-red-950 text-white font-medium rounded-full transition-colors duration-300 text-center shadow-lg hover:shadow-red-900/90"
+                  className="px-8 py-3 bg-red-900 hover:bg-red-950 text-white font-medium rounded-full transition-colors duration-300 text-center shadow-xl hover:shadow-red-900/90"
                 >
                   View Committees
                 </a>
                 <a
                   href="#registration"
-                  className="px-8 py-3 bg-transparent hover:bg-red-950/30 text-red-900 font-medium rounded-full border-2 border-red-900 transition-colors duration-300 text-center shadow-lg hover:shadow-red-900/90"
+                  className="px-8 py-3 bg-transparent hover:bg-red-950/30 text-red-900 font-medium rounded-full border-2 border-red-900 transition-colors duration-300 text-center shadow-xl hover:shadow-red-900/90"
                 >
                   Register Now
                 </a>
@@ -252,13 +272,13 @@ const About = () => {
                 <img
                   src="/conference_hall.jpg"
                   alt="Conference hall"
-                  className="rounded-xl shadow-2xl w-full max-h-[500px] object-cover border-2 border-red-900/70"
+                  className="rounded-xl shadow-2xl w-full max-h-[520px] object-cover border-2 border-red-900/80"
                 />
                 <motion.div
                   className="absolute -bottom-10 -right-10 bg-red-900/95 text-white p-6 rounded-xl shadow-2xl"
-                  initial={{ x: 80, opacity: 0 }}
+                  initial={{ x: 90, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 1, ease: "easeInOut" }}
+                  transition={{ delay: 0.9, duration: 1.1, ease: "easeInOut" }}
                 >
                   <p className="text-xl sm:text-2xl lg:text-3xl font-bold">
                     CU MUN 2025
@@ -273,7 +293,7 @@ const About = () => {
 
           <motion.div
             ref={statsRef}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-28"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mt-32"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
@@ -296,15 +316,15 @@ const About = () => {
             ].map((stat, index) => (
               <motion.div
                 key={index}
-                className="bg-red-900/25 p-8 rounded-xl shadow-lg hover:shadow-red-900/80 border border-red-900/40 transition-all duration-300"
+                className="bg-red-900/30 p-8 rounded-xl shadow-xl hover:shadow-red-900/90 border border-red-900/50 transition-all duration-300"
                 variants={statCardVariants}
-                whileHover={{ y: -15, scale: 1.06 }}
+                whileHover={{ y: -18, scale: 1.07 }}
               >
                 <div className="text-red-900 font-bold text-4xl sm:text-5xl lg:text-6xl mb-4">
-                  <NumberCounter end={stat.value} duration={3} />
+                  <NumberCounter end={stat.value} duration={3.5} />
                   {stat.suffix || ""}
                 </div>
-                <p className="text-white font-semibold text-lg sm:text-xl">
+                <p className="text-white font-semibold text-lg sm:text-xl lg:text-2xl">
                   {stat.label}
                 </p>
                 <p className="text-gray-300 text-sm lg:text-base">
@@ -315,7 +335,7 @@ const About = () => {
           </motion.div>
 
           <motion.div
-            className="mt-24 text-center"
+            className="mt-28 text-center"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
