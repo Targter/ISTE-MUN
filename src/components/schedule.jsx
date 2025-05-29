@@ -173,7 +173,7 @@ const Shimmer = () => (
   </div>
 );
 
-const Schedule = () => {
+const Sc = () => {
   const vantaRef = useRef(null);
   const [activeDay, setActiveDay] = useState(0);
 
@@ -384,4 +384,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default Sc;
