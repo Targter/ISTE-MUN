@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import Registration from "./components/Registration";
 import Schedule from "./components/Schedule";
 // import VantaBackground from "./components/VantaBackground";
+// import About from "./components/About";
 import About from "./components/About";
 const App = () => {
   return (
