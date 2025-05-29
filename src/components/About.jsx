@@ -148,8 +148,8 @@ const About = () => {
           >
             <motion.h2
               className="text-3xl sm:text-4xl lg:text-6xl font-bold text-red-900 mb-6 tracking-tight"
-{/*               variants={itemVariants} */}
             >
+{/*               variants={itemVariants} */}
               About Chandigarh University MUN 2025
             </motion.h2>
             <motion.div
