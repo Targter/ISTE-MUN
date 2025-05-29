@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "./components/Hero";
-// import ImageStack from "./components/ImageStack";
+import ImageStack from "./components/ImageStack";
 import Registration from "./components/Registration";
 // import Schedule from "./components/Schedule";
 // import Schedule from "./components/Schedule";
@@ -14,7 +14,7 @@ const App = () => {
     <div className="font-sans bg-gray-50">
       <Hero />
       <About />
-      {/* <ImageStack /> */}
+      <ImageStack />
       <Registration />
       <Meme />
     </div>
