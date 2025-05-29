@@ -1,27 +1,51 @@
-import React from "react";
-import { motion } from "framer-motion";
-// import * as Vanta from "vanta/dist/vanta.net.min";
+import React, { useEffect, useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useInView,
+} from "framer-motion";
 import NET from "vanta/dist/vanta.net.min";
 import * as THREE from "three";
-// import "tailwindcss/tailwind.css";
 
 const About = () => {
-  React.useEffect(() => {
+  const sectionRef = useRef(null);
+  const statsRef = useRef(null);
+  const isInView = useInView(statsRef, { once: true, margin: "-100px" });
+
+  // Scroll-based animations
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [70, -70]);
+  const opacity = useTransform(
+    scrollYProgress,
+    [0, 0.25, 0.75, 1],
+    [0, 1, 1, 0.85]
+  );
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1, 1.1]);
+
+  // Vanta.js background effect
+  useEffect(() => {
     const vantaEffect = NET({
       el: "#vanta-bg",
       THREE,
       mouseControls: true,
       touchControls: true,
       gyroControls: false,
-      minHeight: 160.0,
-      minWidth: 100.0,
-      scale: 0.6,
-      scaleMobile: 1.0,
-      color: 0xc70000,
-      backgroundColor: 0x0f0000,
-      points: 7.0,
-      maxDistance: 22.0,
-      spacing: 27.0,
+      minHeight: 200.0,
+      minWidth: 200.0,
+      scale: 1.0,
+      scaleMobile: 1.5,
+      color: 0x9b1c1c, // Refined crimson
+      backgroundColor: 0x080000, // Deep near-black
+      points: 16.0,
+      maxDistance: 14.0,
+      spacing: 18.0,
+      showDots: true,
     });
 
     return () => {
@@ -30,44 +54,90 @@ const About = () => {
   }, []);
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0 },
     visible: {
-      opacity: 0.6,
-      y: 0,
-      transition: { duration: 0.4, ease: "easeOut", staggerChildren: 0.2 },
+      opacity: 1,
+      transition: {
+        duration: 1.4,
+        ease: [0.36, 0, 0.66, 1], // Smoother cubic-bezier
+        when: "beforeChildren",
+        staggerChildren: 0.4,
+      },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 40, scale: 0.96 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 1, ease: [0.36, 0, 0.66, 1] },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, x: 100 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 1.2, ease: "easeInOut" },
+    },
+  };
+
+  const statCardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
+  };
+
+  // Number counter effect
+  const NumberCounter = ({ end, duration = 2.5 }) => {
+    const count = useSpring(0, {
+      stiffness: 80,
+      damping: 25,
+      duration: duration * 1000,
+    });
+
+    useEffect(() => {
+      if (isInView) {
+        count.set(end);
+      }
+    }, [isInView, count, end]);
+
+    return <motion.span>{Math.floor(count.get())}</motion.span>;
   };
 
   return (
     <div id="vanta-bg" className="min-h-screen relative overflow-hidden">
-      <section
+      <motion.section
         id="about"
-        className="py-24 bg-transparent relative z-10 text-white font-bold"
+        ref={sectionRef}
+        className="py-32 bg-transparent relative z-10 text-white font-semibold"
+        style={{ opacity }}
       >
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-24"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
           >
             <motion.h2
-              className="text-4xl md:text-5xl font-bold text-red-600 mb-4 tracking-tight"
+              className="text-3xl sm:text-4xl lg:text-6xl font-bold text-red-900 mb-6 tracking-tight"
               variants={itemVariants}
             >
               About Chandigarh University MUN 2025
             </motion.h2>
             <motion.div
-              className="w-32 h-1 bg-red-600 mx-auto mb-6 rounded-full"
+              className="w-36 h-1 bg-red-900 mx-auto mb-8 rounded-full"
               variants={itemVariants}
             ></motion.div>
             <motion.p
-              className="text-white max-w-4xl mx-auto text-lg leading-relaxed"
+              className="text-gray-100 max-w-5xl mx-auto text-base sm:text-lg lg:text-xl leading-relaxed"
               variants={itemVariants}
             >
               The Chandigarh University Model United Nations (CU MUN) Conference
@@ -79,21 +149,22 @@ const About = () => {
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-start">
             <motion.div
               className="order-2 md:order-1"
               initial="hidden"
               animate="visible"
               variants={containerVariants}
+              style={{ y: parallaxY }}
             >
               <motion.h3
-                className="text-3xl font-bold text-red-600 mb-4"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-900 mb-6"
                 variants={itemVariants}
               >
                 Our Mission
               </motion.h3>
               <motion.p
-                className="text-white mb-6 leading-relaxed"
+                className="text-gray-100 mb-8 text-base sm:text-lg lg:text-xl leading-relaxed"
                 variants={itemVariants}
               >
                 CU MUN aims to empower students by developing their skills in
@@ -104,17 +175,17 @@ const About = () => {
               </motion.p>
 
               <motion.h3
-                className="text-3xl font-bold text-red-600 mb-4"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-900 mb-6"
                 variants={itemVariants}
               >
                 Conference Theme
               </motion.h3>
               <motion.p
-                className="text-white mb-6 leading-relaxed"
+                className="text-gray-100 mb-8 text-base sm:text-lg lg:text-xl leading-relaxed"
                 variants={itemVariants}
               >
                 The 2025 edition of CU MUN is themed{" "}
-                <span className="italic font-semibold">
+                <span className="italic font-medium">
                   "Diplomacy Beyond Borders: Tackling Global Challenges Through
                   Science, Security, and Sustainability."
                 </span>{" "}
@@ -124,13 +195,13 @@ const About = () => {
               </motion.p>
 
               <motion.h3
-                className="text-3xl font-bold text-red-600 mb-4"
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-900 mb-6"
                 variants={itemVariants}
               >
                 Why Attend?
               </motion.h3>
               <motion.ul
-                className="text-white mb-6 list-disc list-inside leading-relaxed"
+                className="text-gray-100 mb-8 list-disc list-inside text-base sm:text-lg lg:text-xl leading-relaxed"
                 variants={itemVariants}
               >
                 <li>
@@ -152,18 +223,18 @@ const About = () => {
               </motion.ul>
 
               <motion.div
-                className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mt-8"
+                className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 mt-12"
                 variants={itemVariants}
               >
                 <a
                   href="#committees"
-                  className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-full transition-colors duration-300 text-center shadow-lg hover:shadow-red-600/50"
+                  className="px-8 py-3 bg-red-900 hover:bg-red-950 text-white font-medium rounded-full transition-colors duration-300 text-center shadow-lg hover:shadow-red-900/90"
                 >
                   View Committees
                 </a>
                 <a
                   href="#registration"
-                  className="px-8 py-3 bg-transparent hover:bg-red-800/20 text-red-600 font-medium rounded-full border border-red-600 transition-colors duration-300 text-center shadow-lg hover:shadow-red-600/50"
+                  className="px-8 py-3 bg-transparent hover:bg-red-950/30 text-red-900 font-medium rounded-full border-2 border-red-900 transition-colors duration-300 text-center shadow-lg hover:shadow-red-900/90"
                 >
                   Register Now
                 </a>
@@ -172,74 +243,92 @@ const About = () => {
 
             <motion.div
               className="order-1 md:order-2"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              variants={imageVariants}
+              initial="hidden"
+              animate="visible"
+              style={{ scale }}
             >
               <div className="relative max-w-full w-full md:w-auto">
                 <img
-                  src="src/public/conference_hall.jpg"
+                  src="/conference_hall.jpg"
                   alt="Conference hall"
-                  className="rounded-xl shadow-2xl w-full max-h-[500px] object-cover border-2 border-red-600/50"
+                  className="rounded-xl shadow-2xl w-full max-h-[500px] object-cover border-2 border-red-900/70"
                 />
                 <motion.div
-                  className="absolute -bottom-8 -left-8 bg-red-600/90 text-white p-5 rounded-xl shadow-xl"
-                  initial={{ x: -20, opacity: 0 }}
+                  className="absolute -bottom-10 -right-10 bg-red-900/95 text-white p-6 rounded-xl shadow-2xl"
+                  initial={{ x: 80, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3, duration: 0.5 }}
+                  transition={{ delay: 0.8, duration: 1, ease: "easeInOut" }}
                 >
-                  <p className="text-2xl font-bold">CU MUN 2025</p>
-                  <p className="text-sm">Shaping Future Diplomats</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold">
+                    CU MUN 2025
+                  </p>
+                  <p className="text-sm lg:text-base">
+                    Shaping Future Diplomats
+                  </p>
                 </motion.div>
               </div>
             </motion.div>
           </div>
 
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-20"
+            ref={statsRef}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-28"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
           >
             {[
-              { value: "300+", label: "Delegates", desc: "From across India" },
-              { value: "5", label: "Committees", desc: "UNGA, WHO, and more" },
               {
-                value: "50+",
+                value: 300,
+                label: "Delegates",
+                desc: "From across India",
+                suffix: "+",
+              },
+              { value: 5, label: "Committees", desc: "UNGA, WHO, and more" },
+              {
+                value: 50,
                 label: "Universities",
                 desc: "Nationwide participation",
+                suffix: "+",
               },
-              { value: "3", label: "Days", desc: "Of intense debate" },
+              { value: 3, label: "Days", desc: "Of intense debate" },
             ].map((stat, index) => (
               <motion.div
                 key={index}
-                className="bg-red-900/20 p-6 rounded-xl shadow-lg transition-transform duration-300 hover:transform hover:scale-105 hover:shadow-red-600/50 border border-red-600/30"
-                variants={itemVariants}
-                whileHover={{ y: -5 }}
+                className="bg-red-900/25 p-8 rounded-xl shadow-lg hover:shadow-red-900/80 border border-red-900/40 transition-all duration-300"
+                variants={statCardVariants}
+                whileHover={{ y: -15, scale: 1.06 }}
               >
-                <div className="text-red-600 font-bold text-4xl mb-2 animate-pulse">
-                  {stat.value}
+                <div className="text-red-900 font-bold text-4xl sm:text-5xl lg:text-6xl mb-4">
+                  <NumberCounter end={stat.value} duration={3} />
+                  {stat.suffix || ""}
                 </div>
-                <p className="text-white font-semibold">{stat.label}</p>
-                <p className="text-gray-400 text-sm">{stat.desc}</p>
+                <p className="text-white font-semibold text-lg sm:text-xl">
+                  {stat.label}
+                </p>
+                <p className="text-gray-300 text-sm lg:text-base">
+                  {stat.desc}
+                </p>
               </motion.div>
             ))}
           </motion.div>
 
           <motion.div
-            className="mt-16 text-center"
+            className="mt-24 text-center"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
+            style={{ y: parallaxY }}
           >
             <motion.h3
-              className="text-3xl font-bold text-red-600 mb-4"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-red-900 mb-6"
               variants={itemVariants}
             >
               Our Legacy
             </motion.h3>
             <motion.p
-              className="text-white max-w-3xl mx-auto leading-relaxed"
+              className="text-gray-100 max-w-5xl mx-auto text-base sm:text-lg lg:text-xl leading-relaxed"
               variants={itemVariants}
             >
               Since its inception, CU MUN has hosted over 2,000 delegates,
@@ -249,7 +338,7 @@ const About = () => {
             </motion.p>
           </motion.div>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 };

@@ -227,8 +227,55 @@ const Meme = () => {
 
   return (
     <section className="min-h-screen bg-black flex flex-col lg:flex-row overflow-hidden">
+      {/* className="lg:w-1/2 w-full py-12 px-4 sm:px-6 lg:pr-8 flex items-center justify-center"> */}
+      {/* Right: Vanta Effect and Animations */}
+      <div
+        ref={vantaRef}
+        className="lg:w-1/2 w-full h-[400px] lg:h-auto relative bg-black hidden lg:block"
+      >
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+          <motion.div
+            className="relative inline-block"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <h3 className="text-2xl md:text-3xl font-bold text-red-400 tracking-wider">
+              Cosmic Chronicle
+            </h3>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
+          </motion.div>
+          <motion.p
+            className="text-gray-400 max-w-xs text-sm mt-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            Traverse the timeline of CU-MUN 2025, where stars align for
+            diplomacy.
+          </motion.p>
+          {/* Pulsating Particles */}
+          <motion.div
+            className="absolute top-10 left-10 w-5 h-5 bg-red-500 rounded-full shadow-lg shadow-red-500/50"
+            variants={pulseVariants}
+            animate="animate"
+          />
+          <motion.div
+            className="absolute bottom-10 right-10 w-6 h-6 bg-red-400 rounded-full shadow-lg shadow-red-400/50"
+            variants={pulseVariants}
+            animate="animate"
+            transition={{ duration: 2.5, delay: 0.5 }}
+          />
+          <motion.div
+            className="absolute top-1/3 right-1/4 w-4 h-4 bg-red-600 rounded-full shadow-lg shadow-red-600/50"
+            variants={pulseVariants}
+            animate="animate"
+            transition={{ duration: 2, delay: 1 }}
+          />
+        </div>
+      </div>
       {/* Left: Schedule */}
-      <div className="lg:w-3/5 w-full py-12 px-6 sm:px-8 lg:pr-12 flex items-center justify-center">
+      <div className="lg:w-1/2 w-full py-12 px-4 sm:px-6 lg:pr-8 flex items-center justify-center">
         <div className="max-w-2xl w-full">
           <motion.div
             className="mb-8"
@@ -330,53 +377,6 @@ const Meme = () => {
               <Shimmer />
             </a>
           </motion.div>
-        </div>
-      </div>
-
-      {/* Right: Vanta Effect and Animations */}
-      <div
-        ref={vantaRef}
-        className="lg:w-2/5 w-full h-[300px] lg:h-auto relative bg-black hidden lg:block"
-      >
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-          <motion.div
-            className="relative inline-block"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <h3 className="text-2xl md:text-3xl font-bold text-red-400 tracking-wider">
-              Cosmic Chronicle
-            </h3>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-shimmer"></div>
-          </motion.div>
-          <motion.p
-            className="text-gray-400 max-w-xs text-sm mt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-          >
-            Traverse the timeline of CU-MUN 2025, where stars align for
-            diplomacy.
-          </motion.p>
-          {/* Pulsating Particles */}
-          <motion.div
-            className="absolute top-10 left-10 w-5 h-5 bg-red-500 rounded-full shadow-lg shadow-red-500/50"
-            variants={pulseVariants}
-            animate="animate"
-          />
-          <motion.div
-            className="absolute bottom-10 right-10 w-6 h-6 bg-red-400 rounded-full shadow-lg shadow-red-400/50"
-            variants={pulseVariants}
-            animate="animate"
-            transition={{ duration: 2.5, delay: 0.5 }}
-          />
-          <motion.div
-            className="absolute top-1/3 right-1/4 w-4 h-4 bg-red-600 rounded-full shadow-lg shadow-red-600/50"
-            variants={pulseVariants}
-            animate="animate"
-            transition={{ duration: 2, delay: 1 }}
-          />
         </div>
       </div>
     </section>
