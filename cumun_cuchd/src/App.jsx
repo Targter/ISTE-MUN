@@ -10,11 +10,13 @@ import Committees from "./pages/Committees";
 import Registration from "./pages/Registration";
 import Faculty from "./components/Faculty";
 import Schedule from "./components/schedule";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <div className="w-screen h-full overflow-x-hidden flex flex-col">
       <Navbar />
+      <ScrollToTop/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/committees" element={<Committees />} />
